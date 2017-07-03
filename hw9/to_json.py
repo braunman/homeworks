@@ -5,13 +5,13 @@ from work_with_file import write_to_file, read_file_data
 
 
 def get_info(url):
-	print("Get to {}".format(url))
-	result = requests.get(url)
-	print("result code {}".format(result.status_code))
-	if result.status_code == 200:
-		return result.json()
-	else:
-		raise RuntimeError("Get from url = '{}' return code {}".format(url, result.status_code))
+    print("Get to {}".format(url))
+    result = requests.get(url)
+    print("result code {}".format(result.status_code))
+    if result.status_code == 200:
+        return result.json()
+    else:
+        raise RuntimeError("Get from url = '{}' return code {}".format(url, result.status_code))
 
 if __name__ == '__main__':
     out_json_file = "save_info.json"
