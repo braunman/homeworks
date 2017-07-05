@@ -2,6 +2,7 @@ from flask import Flask, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators, PasswordField
 
+import os
 import json
 import datetime
 
@@ -51,6 +52,14 @@ def user_form():
         return json.dumps(res)
     else:
         return json.dumps(regform.errors)
+
+@app.route('/serve/<path:filename>')
+def find(filename):
+    try:
+        with open(os.path.join("./file", filename)) as file:
+            return file.read()
+    except:
+        return 'fail', 404
 
 
 if __name__ == "__main__":
