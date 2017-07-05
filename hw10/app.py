@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_wtf import FlaskForm
 from wtforms import StringField, validators
 
@@ -10,12 +10,13 @@ locals_list = ['ru', 'en', 'it']
 app = Flask(__name__)
 app.config.update(
     DEBUG = True,
+    SECRET_KEY='This key must be secret!',
     )
 
 class RegForm(FlaskForm):
     email = StringField(validators = [
             validators.Length(min=6, max=36, message="Leght from 6 to 36"),
-            validators.Length.Email(message="Wrong e-mail"),
+            validators.Email(message="Wrong e-mail"),
             validators.Required(),
         ])
 
@@ -39,7 +40,7 @@ def meta():
 @app.route('/form/user',methods=["POST"] )
 def user_form():
     regform = RegForm(request.form)
-    print(form.vatidate())
+    print(regform.vatidate())
     return "ok", 200
 
 
