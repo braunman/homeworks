@@ -19,6 +19,7 @@ class RegForm(FlaskForm):
             validators.Email(message="Wrong e-mail"),
             validators.Required(),
         ])
+    
 
 
 
@@ -29,18 +30,19 @@ def locales():
 @app.route('/meta')
 def meta():
     now_date = datetime.datetime.now()
-    print(now_date.month)
     meta_info = { "current_date": now_date.strftime('%d/%m/%Y'),
                   "current_time": now_date.strftime('%H:%M:%S'),
-                  "received_headers": True,
-                  "received_query_args": ["name", "job", "age"]
+                  "received_headers": dict(request.headers),
+                  "received_query_args": dict(request.args),
                 }
-    return json.dumps(meta_info)
+    return json.dumps(meta_info,sort_keys=True, indent=4)
+
 
 @app.route('/form/user',methods=["POST"] )
 def user_form():
     regform = RegForm(request.form)
-    print(regform.vatidate())
+    if not regform.validate():
+        return 'invalid', 400
     return "ok", 200
 
 
