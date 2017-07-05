@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_wtf import FlaskForm
-from wtforms import StringField, validators
+from wtforms import StringField, validators, PasswordField
 
 import json
 import datetime
@@ -10,17 +10,20 @@ locals_list = ['ru', 'en', 'it']
 app = Flask(__name__)
 app.config.update(
     DEBUG = True,
-    SECRET_KEY='This key must be secret!',
+    SECRET_KEY='WWWHHHHHHOOOOOOOOOOOOTTTTTTTTT',
+    WTF_CSRF_ENABLED=False,
     )
 
 class RegForm(FlaskForm):
-    email = StringField(validators = [
-            validators.Length(min=6, max=36, message="Leght from 6 to 36"),
-            validators.Email(message="Wrong e-mail"),
-            validators.Required(),
+    email = StringField(label='E-mail', validators=[
+        validators.Length(min=6, max=35), validators.Email()
+    ])
+    password = PasswordField(validators = [
+        validators.EqualTo(fieldname='password2'),
+        validators.Length(min=6),
+        validators.Required(),
         ])
-    
-
+    password2 = PasswordField('Repeat Password')
 
 
 @app.route('/locales')
@@ -38,12 +41,16 @@ def meta():
     return json.dumps(meta_info,sort_keys=True, indent=4)
 
 
-@app.route('/form/user',methods=["POST"] )
+@app.route('/form/user', methods=["POST"] )
 def user_form():
+    res = {}
     regform = RegForm(request.form)
-    if not regform.validate():
-        return 'invalid', 400
-    return "ok", 200
+    print(request.form, regform.validate())
+    if regform.validate():
+        res["Status"] = int(regform.validate())
+        return json.dumps(res)
+    else:
+        return json.dumps(regform.errors)
 
 
 if __name__ == "__main__":
