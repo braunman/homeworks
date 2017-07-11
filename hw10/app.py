@@ -10,20 +10,21 @@ locals_list = ['ru', 'en', 'it']
 
 app = Flask(__name__)
 app.config.update(
-    DEBUG = True,
+    DEBUG=True,
     SECRET_KEY='WWWHHHHHHOOOOOOOOOOOOTTTTTTTTT',
     WTF_CSRF_ENABLED=False,
-    )
+)
+
 
 class RegForm(FlaskForm):
     email = StringField(label='E-mail', validators=[
         validators.Length(min=6, max=35), validators.Email()
     ])
-    password = PasswordField(validators = [
+    password = PasswordField(validators=[
         validators.EqualTo(fieldname='password2'),
         validators.Length(min=6),
         validators.Required(),
-        ])
+    ])
     password2 = PasswordField('Repeat Password')
 
 
@@ -31,18 +32,19 @@ class RegForm(FlaskForm):
 def locales():
     return json.dumps(locals_list)
 
+
 @app.route('/meta')
 def meta():
     now_date = datetime.datetime.now()
-    meta_info = { "current_date": now_date.strftime('%d/%m/%Y'),
-                  "current_time": now_date.strftime('%H:%M:%S'),
-                  "received_headers": dict(request.headers),
-                  "received_query_args": dict(request.args),
-                }
-    return json.dumps(meta_info,sort_keys=True, indent=4)
+    meta_info = {"current_date": now_date.strftime('%d/%m/%Y'),
+                 "current_time": now_date.strftime('%H:%M:%S'),
+                 "received_headers": dict(request.headers),
+                 "received_query_args": dict(request.args),
+                 }
+    return json.dumps(meta_info, sort_keys=True, indent=4)
 
 
-@app.route('/form/user', methods=["POST"] )
+@app.route('/form/user', methods=["POST"])
 def user_form():
     res = {}
     regform = RegForm(request.form)
@@ -52,6 +54,7 @@ def user_form():
         return json.dumps(res)
     else:
         return json.dumps(regform.errors)
+
 
 @app.route('/serve/<path:filename>')
 def find(filename):
